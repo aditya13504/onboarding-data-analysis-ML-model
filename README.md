@@ -159,15 +159,3 @@ Note: some modules are lightweight stubs in this repo (for example `src/cli.py` 
 ## License
 
 MIT (see `pyproject.toml`).
-
-## Next steps I can take (pick one)
-
-1. Produce a per-module reference by scanning all `src/` python files and extracting docstrings and signatures.
-2. Generate usage examples and a minimal demo script that ingests `sample_data/events.csv` and produces a sample report.
-3. Wire up small unit tests for the analysis/cluster pipeline and run them locally.
-
-If you'd like me to continue with any of the next steps, tell me which one and I'll proceed.
-
----
-
-Generated on: 2025-08-26
