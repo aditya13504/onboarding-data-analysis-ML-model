@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "onboarding-dropoff-analyzer"
+version = "0.1.0"
+description = "AI-driven onboarding drop-off analyzer: ingestion, analytics, clustering, recommendations, reporting"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name="Onboarding Analyzer Team"}]
+dependencies = [
+  "fastapi~=0.111.0",
+  "uvicorn[standard]~=0.30.0",
+  "sqlalchemy~=2.0.29",
+  "psycopg2-binary~=2.9.9",
+  "alembic~=1.13.1",
+  "pydantic~=2.7.0",
+  "pydantic-settings~=2.2.1",
+  "python-dotenv~=1.0.1",
+  "pandas~=2.2.2",
+  "numpy~=1.26.4",
+  "scikit-learn~=1.4.2",
+  "scipy~=1.13.0",
+  "celery[redis]~=5.3.6",
+  "redis~=5.0.4",
+  "slack_sdk~=3.27.0",
+  "notion-client~=2.2.1",
+  "jinja2~=3.1.3",
+  "orjson~=3.10.0",
+  "prometheus-client~=0.20.0",
+  "tenacity~=8.2.3"
+  ,"requests~=2.32.0"
+  ,"cryptography~=42.0.0"
+  ,"matplotlib~=3.9.0"
+  ,"pillow~=10.3.0"
+  ,"opentelemetry-api~=1.25.0"
+  ,"opentelemetry-sdk~=1.25.0"
+  ,"opentelemetry-exporter-otlp~=1.25.0"
+]
+
+[project.optional-dependencies]
+dev = [
+  "ruff~=0.4.2",
+  "mypy~=1.9.0",
+  "bandit[toml]~=1.7.8",
+  "safety~=3.2.1"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_configs = true
+ignore_missing_imports = true
