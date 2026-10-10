@@ -1,743 +1,363 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Onboarding Drop-off Analyzer - Control Panel</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            color: #2c3e50;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .header {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .header h1 {
-            color: #2c3e50;
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: #7f8c8d;
-            font-size: 1.1rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-card i {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            color: #3498db;
-        }
-
-        .stat-card h3 {
-            font-size: 2rem;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-
-        .stat-card p {
-            color: #7f8c8d;
-            font-size: 1rem;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .feature-card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .feature-card h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.3rem;
-        }
-
-        .feature-card p {
-            color: #7f8c8d;
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-        }
-
-        .btn:hover {
-            background: linear-gradient(135deg, #2980b9, #1e6a92);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #27ae60, #229954);
-        }
-
-        .btn-success:hover {
-            background: linear-gradient(135deg, #229954, #1e8449);
-            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-        }
-
-        .btn-warning:hover {
-            background: linear-gradient(135deg, #e67e22, #d35400);
-            box-shadow: 0 4px 12px rgba(243, 156, 18, 0.3);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-        }
-
-        .btn-danger:hover {
-            background: linear-gradient(135deg, #c0392b, #a93226);
-            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
-        }
-
-        .charts-section {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-
-        .charts-section h2 {
-            color: #2c3e50;
-            margin-bottom: 25px;
-            text-align: center;
-            font-size: 1.8rem;
-        }
-
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 30px;
-        }
-
-        .chart-container {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #e9ecef;
-        }
-
-        .chart-container h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .chart-container canvas {
-            max-height: 300px;
-        }
-
-        .api-section {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
-        }
-
-        .api-section h2 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .api-links {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            text-align: center;
-        }
-
-        .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #27ae60;
-            margin-right: 8px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .footer {
-            text-align: center;
-            padding: 20px;
-            color: #7f8c8d;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            .header h1 {
-                font-size: 1.8rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8fc">
+  <meta name="description" content="Explore onboarding funnels and drop-off patterns from your event data.">
+  <title>Onboarding Analytics — Funnel Explorer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #697386;
+      --line: #e7eaf0;
+      --surface: #fff;
+      --canvas: #f7f8fc;
+      --brand: #6157e8;
+      --brand-soft: #eeedff;
+      --green: #16876a;
+      --amber: #a96306;
+      --red: #c44355;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: var(--ink); background: var(--canvas); }
+    button, input { font: inherit; }
+    button { cursor: pointer; }
+    .shell { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+    header { height: 76px; background: var(--surface); border-bottom: 1px solid var(--line); }
+    .topbar { height: 100%; display: flex; align-items: center; justify-content: space-between; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 750; letter-spacing: -.03em; }
+    .brand-mark { width: 36px; height: 36px; display: grid; place-items: center; color: white; border-radius: 11px; background: linear-gradient(145deg, #8177ff, #5146d7); }
+    .brand small { display: block; color: var(--muted); font-size: 11px; font-weight: 550; letter-spacing: .04em; }
+    .local-pill { display: inline-flex; align-items: center; gap: 8px; border: 1px solid #d7eee6; border-radius: 999px; padding: 7px 11px; color: #147558; background: #f1faf6; font-size: 12px; font-weight: 650; }
+    .local-pill::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #28a77f; }
+    main { padding: 36px 0 56px; }
+    .heading-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 26px; }
+    .eyebrow { margin: 0 0 8px; color: var(--brand); font-size: 11px; font-weight: 750; letter-spacing: .13em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(28px, 4vw, 38px); line-height: 1.12; letter-spacing: -.045em; }
+    .subtitle { margin: 10px 0 0; color: var(--muted); font-size: 15px; }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+    .button { min-height: 40px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--line); border-radius: 9px; padding: 0 14px; color: var(--ink); background: white; font-size: 13px; font-weight: 650; transition: transform .15s, box-shadow .15s, border-color .15s; }
+    .button:hover { transform: translateY(-1px); border-color: #c9c7f7; box-shadow: 0 5px 16px #24264a12; }
+    .button.primary { color: white; border-color: var(--brand); background: var(--brand); }
+    .button:focus-visible, input:focus-visible { outline: 3px solid #aaa5ff; outline-offset: 2px; }
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 15px; margin-bottom: 18px; }
+    .metric, .panel { border: 1px solid var(--line); border-radius: 13px; background: var(--surface); box-shadow: 0 3px 12px #17203306; }
+    .metric { min-height: 125px; padding: 19px 20px; }
+    .metric-label { color: var(--muted); font-size: 12px; font-weight: 600; }
+    .metric-value { margin-top: 13px; font-size: 29px; font-weight: 740; letter-spacing: -.045em; }
+    .metric-note { margin-top: 4px; color: var(--muted); font-size: 11px; }
+    .panel { padding: 22px; }
+    .panel-title { margin: 0; font-size: 15px; font-weight: 700; letter-spacing: -.015em; }
+    .panel-description { margin: 5px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    .upload-panel { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 18px; border-style: dashed; border-color: #d5d4f1; background: #fdfdff; }
+    .upload-copy { display: flex; align-items: flex-start; gap: 14px; }
+    .upload-icon { width: 42px; height: 42px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 12px; color: var(--brand); background: var(--brand-soft); font-size: 19px; }
+    .upload-controls { display: flex; flex-wrap: wrap; gap: 9px; }
+    .hidden-input { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; clip-path: inset(50%); }
+    .notice { display: none; margin: 0 0 18px; border: 1px solid #f1d3a6; border-radius: 9px; padding: 12px 14px; color: #80500b; background: #fff9ed; font-size: 13px; }
+    .notice.visible { display: block; }
+    .notice.error { border-color: #f2c9ce; color: #9b3040; background: #fff5f6; }
+    .content-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(290px, .9fr); gap: 18px; margin-bottom: 18px; }
+    .funnel { margin-top: 22px; }
+    .funnel-row { display: grid; grid-template-columns: minmax(120px, 1fr) minmax(100px, 2fr) 75px 72px; align-items: center; gap: 14px; min-height: 51px; border-bottom: 1px solid #f0f1f5; }
+    .funnel-row:last-child { border-bottom: 0; }
+    .stage-name { overflow: hidden; font-size: 12px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
+    .bar-track { height: 9px; overflow: hidden; border-radius: 99px; background: #f0f0f7; }
+    .bar { height: 100%; min-width: 2px; border-radius: inherit; background: linear-gradient(90deg, #766cf1, #a39cff); transition: width .35s ease; }
+    .stage-count, .stage-rate { color: var(--muted); font-size: 12px; text-align: right; }
+    .stage-count strong { color: var(--ink); font-weight: 700; }
+    .funnel-header { color: #8a91a1; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    .drop { color: var(--red); }
+    .insight { display: flex; gap: 11px; padding: 15px 0; border-bottom: 1px solid #f0f1f5; }
+    .insight:last-child { border: 0; padding-bottom: 0; }
+    .insight-mark { width: 29px; height: 29px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 9px; color: var(--brand); background: var(--brand-soft); }
+    .insight strong { display: block; margin: 1px 0 4px; font-size: 12px; }
+    .insight p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.55; }
+    .table-wrap { overflow: auto; margin-top: 17px; }
+    table { width: 100%; border-collapse: collapse; white-space: nowrap; }
+    th, td { padding: 12px 10px; border-bottom: 1px solid #f0f1f5; text-align: left; font-size: 12px; }
+    th { color: #878e9e; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    td { color: #41495a; }
+    td:first-child { color: var(--ink); font-weight: 650; }
+    .badge { display: inline-flex; border-radius: 999px; padding: 4px 8px; color: var(--green); background: #eaf7f2; font-size: 10px; font-weight: 700; }
+    .empty { min-height: 218px; display: grid; place-items: center; padding: 28px; color: var(--muted); text-align: center; }
+    .empty-icon { margin-bottom: 10px; color: #a39cf8; font-size: 25px; }
+    .empty strong { display: block; margin-bottom: 6px; color: var(--ink); font-size: 13px; }
+    .empty p { max-width: 330px; margin: 0; font-size: 12px; line-height: 1.6; }
+    footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 18px; color: var(--muted); font-size: 11px; }
+    footer a { color: #6258d8; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+    @media (max-width: 850px) {
+      .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .content-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .shell { padding: 0 17px; }
+      header { height: 66px; }
+      main { padding-top: 27px; }
+      .heading-row, .upload-panel { align-items: flex-start; flex-direction: column; }
+      .actions, .upload-controls { width: 100%; }
+      .actions .button, .upload-controls .button { flex: 1; }
+      .metric { min-height: 112px; padding: 15px; }
+      .metric-value { font-size: 24px; }
+      .panel { padding: 17px; }
+      .funnel-row { grid-template-columns: minmax(85px, 1fr) minmax(45px, 1fr) 55px 52px; gap: 8px; }
+      .stage-name { font-size: 11px; }
+      footer { align-items: flex-start; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1><i class="fas fa-chart-line"></i> Onboarding Drop-off Analyzer</h1>
-            <p>Comprehensive analytics and optimization platform for user onboarding flows</p>
-            <span class="status-indicator"></span>
-            <span style="color: #27ae60; font-weight: 600;">System Online</span>
+  <header>
+    <div class="shell topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">↗</span>
+        <span>Pathway <small>ONBOARDING ANALYTICS</small></span>
+      </div>
+      <span class="local-pill">Private, in-browser analysis</span>
+    </div>
+  </header>
+  <main class="shell">
+    <section class="heading-row" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">Product analytics</p>
+        <h1 id="page-title">Onboarding funnel</h1>
+        <p class="subtitle" id="data-caption">Start with a sample journey or bring your own event CSV.</p>
+      </div>
+      <div class="actions">
+        <button class="button" id="export-button" type="button" disabled>↓ Export summary</button>
+        <button class="button primary" id="sample-button" type="button">▶ Load sample</button>
+      </div>
+    </section>
+
+    <section class="metrics" aria-label="Funnel summary">
+      <article class="metric"><div class="metric-label">Users in funnel</div><div class="metric-value" id="users-value">—</div><div class="metric-note">Unique users in the first stage</div></article>
+      <article class="metric"><div class="metric-label">Events analyzed</div><div class="metric-value" id="events-value">—</div><div class="metric-note">Valid rows in this dataset</div></article>
+      <article class="metric"><div class="metric-label">Reached last step</div><div class="metric-value" id="conversion-value">—</div><div class="metric-note">Of first-stage users</div></article>
+      <article class="metric"><div class="metric-label">Largest step drop-off</div><div class="metric-value" id="dropoff-value">—</div><div class="metric-note" id="dropoff-note">Compared with the previous step</div></article>
+    </section>
+
+    <section class="panel upload-panel" id="drop-zone" aria-label="Import event data">
+      <div class="upload-copy">
+        <span class="upload-icon" aria-hidden="true">⇧</span>
+        <div>
+          <h2 class="panel-title">Analyze your event data</h2>
+          <p class="panel-description">Choose a CSV with <code>user_id</code> and <code>event_name</code> columns. Your file is processed in this browser and never uploaded.</p>
         </div>
+      </div>
+      <div class="upload-controls">
+        <input class="hidden-input" id="file-input" type="file" accept=".csv,text/csv">
+        <button class="button" id="template-button" type="button">↓ CSV template</button>
+        <button class="button primary" id="upload-button" type="button">Choose CSV</button>
+      </div>
+    </section>
+    <div class="notice" id="notice" role="status" aria-live="polite"></div>
 
-        <!-- Key Statistics -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <i class="fas fa-users"></i>
-                <h3 id="totalUsers">24,567</h3>
-                <p>Total Users Analyzed</p>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-chart-bar"></i>
-                <h3 id="conversionRate">78.2%</h3>
-                <p>Average Conversion Rate</p>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-exclamation-triangle"></i>
-                <h3 id="frictionPoints">12</h3>
-                <p>Friction Points Detected</p>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-lightbulb"></i>
-                <h3 id="recommendations">8</h3>
-                <p>Active Recommendations</p>
-            </div>
+    <div class="content-grid">
+      <section class="panel" aria-labelledby="funnel-title">
+        <h2 class="panel-title" id="funnel-title">Journey performance</h2>
+        <p class="panel-description">Distinct users at each event, relative to the first observed stage.</p>
+        <div class="funnel" id="funnel-content">
+          <div class="empty"><div><div class="empty-icon" aria-hidden="true">⌁</div><strong>Your funnel will appear here</strong><p>Load the example journey or import an event CSV to see where users continue or drop off.</p></div></div>
         </div>
-
-        <!-- Main Features -->
-        <div class="features-grid">
-            <div class="feature-card">
-                <h3><i class="fas fa-play-circle"></i> Start Analysis</h3>
-                <p>Begin comprehensive analysis of user onboarding flows, identify friction points, and generate optimization recommendations.</p>
-                <button class="btn btn-success" onclick="startAnalysis()">
-                    <i class="fas fa-rocket"></i> Run Analysis
-                </button>
-            </div>
-
-            <div class="feature-card">
-                <h3><i class="fas fa-file-upload"></i> Data Ingestion</h3>
-                <p>Upload and process user event data from various sources including analytics platforms and databases.</p>
-                <button class="btn" onclick="openDataIngestion()">
-                    <i class="fas fa-upload"></i> Import Data
-                </button>
-            </div>
-
-            <div class="feature-card">
-                <h3><i class="fas fa-brain"></i> ML Analysis</h3>
-                <p>Apply machine learning algorithms to detect patterns, predict drop-offs, and generate insights.</p>
-                <button class="btn btn-warning" onclick="runMLAnalysis()">
-                    <i class="fas fa-cogs"></i> ML Pipeline
-                </button>
-            </div>
-
-            <div class="feature-card">
-                <h3><i class="fas fa-file-pdf"></i> Generate Reports</h3>
-                <p>Create comprehensive PDF reports with executive summaries, technical details, and actionable recommendations.</p>
-                <button class="btn" onclick="generateReport()">
-                    <i class="fas fa-file-download"></i> Export Report
-                </button>
-            </div>
-
-            <div class="feature-card">
-                <h3><i class="fas fa-envelope"></i> Email Digest</h3>
-                <p>Configure and manage automated email digests for stakeholders with key metrics and insights.</p>
-                <button class="btn btn-success" onclick="configureEmail()">
-                    <i class="fas fa-paper-plane"></i> Setup Digest
-                </button>
-            </div>
-
-            <div class="feature-card">
-                <h3><i class="fas fa-database"></i> Database Management</h3>
-                <p>Manage database connections, run migrations, and monitor data quality metrics.</p>
-                <button class="btn btn-danger" onclick="openDatabase()">
-                    <i class="fas fa-database"></i> DB Console
-                </button>
-            </div>
+      </section>
+      <section class="panel" aria-labelledby="insights-title">
+        <h2 class="panel-title" id="insights-title">What to look for</h2>
+        <p class="panel-description">A quick read of the biggest opportunity in your journey.</p>
+        <div id="insights-content">
+          <div class="insight"><span class="insight-mark" aria-hidden="true">✦</span><div><strong>Start with a clear first step</strong><p>Upload event data to find the step with the largest observed loss of users.</p></div></div>
+          <div class="insight"><span class="insight-mark" aria-hidden="true">◎</span><div><strong>Bring consistent identifiers</strong><p>Use one stable user ID per person so stage counts reflect people, not event volume.</p></div></div>
         </div>
-
-        <!-- Analytics Charts -->
-        <div class="charts-section">
-            <h2><i class="fas fa-chart-pie"></i> Live Analytics Dashboard</h2>
-            <div class="charts-grid">
-                <div class="chart-container">
-                    <h3>Conversion Funnel</h3>
-                    <canvas id="funnelChart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <h3>Drop-off Points</h3>
-                    <canvas id="dropoffChart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <h3>User Segments</h3>
-                    <canvas id="segmentChart"></canvas>
-                </div>
-                <div class="chart-container">
-                    <h3>Performance Trends</h3>
-                    <canvas id="trendsChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- API Access -->
-        <div class="api-section">
-            <h2><i class="fas fa-code"></i> API & Documentation</h2>
-            <div class="api-links">
-                <a href="/docs" class="btn" target="_blank">
-                    <i class="fas fa-book"></i> API Docs
-                </a>
-                <a href="/health" class="btn" target="_blank">
-                    <i class="fas fa-heartbeat"></i> Health Check
-                </a>
-                <a href="/api/v1/sessions" class="btn" target="_blank">
-                    <i class="fas fa-users"></i> Sessions API
-                </a>
-                <a href="/api/v1/analytics" class="btn" target="_blank">
-                    <i class="fas fa-chart-line"></i> Analytics API
-                </a>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <div class="footer">
-            <p><i class="fas fa-copyright"></i> 2025 Onboarding Drop-off Analyzer | Built with FastAPI, ML Analytics, and Modern Web Technologies</p>
-        </div>
+      </section>
     </div>
 
-    <script>
-        // Initialize Charts with Real Data
-        async function initializeCharts() {
-            const apiPayload = await fetchAnalyticsData();
-            const data = apiPayload && apiPayload.data ? apiPayload.data : apiPayload; // unwrap APIResponse if present
-            
-            // Store chart references
-            charts = {};
-            
-            // Funnel Chart
-            const funnelCtx = document.getElementById('funnelChart').getContext('2d');
-            charts.funnel = new Chart(funnelCtx, {
-                type: 'bar',
-                data: {
-                    labels: data.funnelData.labels,
-                    datasets: [{
-                        label: 'Users',
-                        data: data.funnelData.values,
-                        backgroundColor: '#3498db',
-                        borderColor: '#2980b9',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    animation: {
-                        duration: 750,
-                        easing: 'easeInOutQuart'
-                    }
-                }
-            });
+    <section class="panel" aria-labelledby="stages-title">
+      <h2 class="panel-title" id="stages-title">Stage breakdown</h2>
+      <p class="panel-description">Counts include each user once per stage, even if they triggered the event multiple times.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Journey stage</th><th>Users</th><th>Reached from start</th><th>Change from previous</th></tr></thead>
+          <tbody id="stage-rows"><tr><td colspan="4"><div class="empty"><div><strong>No event data loaded</strong><p>Stage-level results will show here after analysis.</p></div></div></td></tr></tbody>
+        </table>
+      </div>
+    </section>
+    <footer>
+      <span>Static demo · analysis runs locally · no account or API connection</span>
+      <a href="https://github.com/aditya13504/onboarding-data-analysis-ML-model" target="_blank" rel="noreferrer">Project source ↗</a>
+    </footer>
+  </main>
+  <script>
+    const sampleRows = [
+      ['u01', 'Visit landing page'], ['u01', 'Create account'], ['u01', 'Verify email'], ['u01', 'Complete profile'], ['u01', 'First key action'],
+      ['u02', 'Visit landing page'], ['u02', 'Create account'], ['u02', 'Verify email'], ['u02', 'Complete profile'], ['u02', 'First key action'],
+      ['u03', 'Visit landing page'], ['u03', 'Create account'], ['u03', 'Verify email'], ['u03', 'Complete profile'], ['u03', 'First key action'],
+      ['u04', 'Visit landing page'], ['u04', 'Create account'], ['u04', 'Verify email'], ['u04', 'Complete profile'], ['u04', 'First key action'],
+      ['u05', 'Visit landing page'], ['u05', 'Create account'], ['u05', 'Verify email'], ['u05', 'Complete profile'],
+      ['u06', 'Visit landing page'], ['u06', 'Create account'], ['u06', 'Verify email'], ['u06', 'Complete profile'],
+      ['u07', 'Visit landing page'], ['u07', 'Create account'], ['u07', 'Verify email'],
+      ['u08', 'Visit landing page'], ['u08', 'Create account'], ['u08', 'Verify email'],
+      ['u09', 'Visit landing page'], ['u09', 'Create account'],
+      ['u10', 'Visit landing page'], ['u10', 'Create account'],
+      ['u11', 'Visit landing page'],
+      ['u12', 'Visit landing page']
+    ];
 
-            // Drop-off Chart
-            const dropoffCtx = document.getElementById('dropoffChart').getContext('2d');
-            charts.dropoff = new Chart(dropoffCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: data.dropoffData.labels,
-                    datasets: [{
-                        data: data.dropoffData.values,
-                        backgroundColor: ['#e74c3c', '#f39c12', '#f1c40f', '#95a5a6']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 750,
-                        easing: 'easeInOutQuart'
-                    }
-                }
-            });
+    const byId = (id) => document.getElementById(id);
+    let currentAnalysis = null;
 
-            // Segment Chart
-            const segmentCtx = document.getElementById('segmentChart').getContext('2d');
-            charts.segment = new Chart(segmentCtx, {
-                type: 'pie',
-                data: {
-                    labels: data.segmentData.labels,
-                    datasets: [{
-                        data: data.segmentData.values,
-                        backgroundColor: ['#3498db', '#27ae60', '#9b59b6']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 750,
-                        easing: 'easeInOutQuart'
-                    }
-                }
-            });
+    function parseCsv(text) {
+      const rows = [];
+      let row = [];
+      let cell = '';
+      let quoted = false;
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        if (quoted) {
+          if (char === '"' && text[i + 1] === '"') { cell += '"'; i += 1; }
+          else if (char === '"') quoted = false;
+          else cell += char;
+        } else if (char === '"' && cell.length === 0) quoted = true;
+        else if (char === ',') { row.push(cell); cell = ''; }
+        else if (char === '\n' || char === '\r') {
+          if (char === '\r' && text[i + 1] === '\n') i += 1;
+          row.push(cell); cell = '';
+          if (row.some((value) => value.trim() !== '')) rows.push(row);
+          row = [];
+        } else cell += char;
+      }
+      if (quoted) throw new Error('The CSV has an unclosed quoted field.');
+      row.push(cell);
+      if (row.some((value) => value.trim() !== '')) rows.push(row);
+      if (rows.length < 2) throw new Error('The CSV needs a header row and at least one event.');
+      const headers = rows[0].map((value) => value.trim().toLowerCase());
+      const userIndex = headers.indexOf('user_id');
+      const eventIndex = headers.findIndex((value) => ['event_name', 'event', 'event_type'].includes(value));
+      if (userIndex < 0 || eventIndex < 0) throw new Error('Required columns are user_id and event_name (event and event_type are also accepted).');
+      return rows.slice(1).map((values, index) => {
+        const userId = (values[userIndex] || '').trim();
+        const eventName = (values[eventIndex] || '').trim();
+        if (!userId || !eventName) throw new Error(`Row ${index + 2} is missing a user ID or event name.`);
+        return { userId, eventName, position: index };
+      });
+    }
 
-            // Trends Chart
-            const trendsCtx = document.getElementById('trendsChart').getContext('2d');
-            charts.trends = new Chart(trendsCtx, {
-                type: 'line',
-                data: {
-                    labels: data.trendsData.labels,
-                    datasets: [{
-                        label: 'Conversion Rate',
-                        data: data.trendsData.values,
-                        borderColor: '#27ae60',
-                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
-                        fill: true,
-                        tension: 0.4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    animation: {
-                        duration: 750,
-                        easing: 'easeInOutQuart'
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100
-                        }
-                    }
-                }
-            });
-        }
+    function analyze(rows, sourceName) {
+      if (!rows.length) throw new Error('No usable event rows were found.');
+      const userSets = new Map();
+      for (const row of rows) {
+        if (!userSets.has(row.eventName)) userSets.set(row.eventName, new Set());
+        userSets.get(row.eventName).add(row.userId);
+      }
+      const stages = Array.from(userSets, ([name, users]) => ({ name, users: users.size }));
+      const startUsers = stages[0].users;
+      for (let i = 0; i < stages.length; i += 1) {
+        stages[i].rate = startUsers ? stages[i].users / startUsers : 0;
+        stages[i].drop = i ? Math.max(0, (stages[i - 1].users - stages[i].users) / stages[i - 1].users) : 0;
+      }
+      currentAnalysis = { stages, eventCount: rows.length, startUsers, sourceName };
+      renderAnalysis(currentAnalysis);
+    }
 
-        // Real-time Data Management
-        let charts = {};
-        let realTimeUpdateInterval;
+    function safeText(value) {
+      return String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+    }
 
-        // Fetch real analytics data
-        async function fetchAnalyticsData() {
-            try {
-                const response = await fetch('/api/v1/analytics/dashboard-stats');
-                if (response.ok) {
-                    return await response.json();
-                }
-            } catch (error) {
-                console.warn('Using sample data - API not available:', error);
-            }
-            
-            // Fallback to sample data structure
-            return {
-                totalUsers: Math.floor(Math.random() * 1000) + 24000,
-                conversionRate: (Math.random() * 10 + 75).toFixed(1),
-                frictionPoints: Math.floor(Math.random() * 5) + 10,
-                recommendations: Math.floor(Math.random() * 3) + 7,
-                funnelData: {
-                    labels: ['Landing', 'Signup', 'Verification', 'Profile', 'First Action', 'Complete'],
-                    values: [10000, 8500, 7200, 6800, 5900, 5400]
-                },
-                dropoffData: {
-                    labels: ['Form Errors', 'Slow Loading', 'Complex UI', 'Technical Issues'],
-                    values: [35, 25, 25, 15]
-                },
-                segmentData: {
-                    labels: ['Mobile', 'Desktop', 'Tablet'],
-                    values: [60, 35, 5]
-                },
-                trendsData: {
-                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                    values: [75, 78, 80, 77, 82, 78]
-                }
-            };
-        }
+    function percent(value) {
+      return `${(value * 100).toFixed(1)}%`;
+    }
 
-        // Feature Functions with Real API Integration
-        async function startAnalysis() {
-            const btn = event.target;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
-            btn.disabled = true;
-            
-            try {
-                const response = await fetch('/api/v1/analytics/start-analysis', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        scope: 'global',
-                        goals: ['reduce_dropoff', 'improve_conversion'],
-                        start_date: new Date(Date.now() - 30*24*60*60*1000).toISOString(),
-                        end_date: new Date().toISOString()
-                    })
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    alert(`✅ Analysis Started!\n\nAnalysis ID: ${result.data.analysis_id}\nStatus: ${result.data.status}\nEstimated completion: 5-10 minutes`);
-                } else {
-                    throw new Error('Analysis API not available');
-                }
-            } catch (error) {
-                console.warn('Analysis API error:', error);
-                alert('🚀 Analysis Started!\n\n• Processing user flow data\n• Detecting friction points\n• Generating ML insights\n• Results will appear in real-time');
-            } finally {
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }, 2000);
-            }
-        }
+    function renderAnalysis(result) {
+      const { stages } = result;
+      const last = stages[stages.length - 1];
+      const worst = stages.slice(1).reduce((best, stage) => stage.drop > best.drop ? stage : best, stages[1] || { drop: 0, name: '—' });
+      byId('users-value').textContent = result.startUsers.toLocaleString();
+      byId('events-value').textContent = result.eventCount.toLocaleString();
+      byId('conversion-value').textContent = percent(last.rate);
+      byId('dropoff-value').textContent = stages.length > 1 ? percent(worst.drop) : '—';
+      byId('dropoff-note').textContent = stages.length > 1 ? `After ${worst.name}` : 'Add more than one journey stage';
+      byId('data-caption').textContent = `${result.sourceName} · ${stages.length} stages · computed in this browser`;
+      byId('export-button').disabled = false;
 
-        function openDataIngestion() {
-            window.open('/api/v1/ingestion', '_blank');
-        }
+      byId('funnel-content').innerHTML = stages.map((stage, index) => `
+        <div class="funnel-row">
+          <div class="stage-name" title="${safeText(stage.name)}">${safeText(stage.name)}</div>
+          <div class="bar-track" role="img" aria-label="${percent(stage.rate)} of first-stage users"><div class="bar" style="width:${Math.max(1, stage.rate * 100)}%"></div></div>
+          <div class="stage-count"><strong>${stage.users.toLocaleString()}</strong> users</div>
+          <div class="stage-rate">${index ? `<span class="drop">−${percent(stage.drop)}</span>` : '<span class="badge">Start</span>'}</div>
+        </div>`).join('');
 
-        async function runMLAnalysis() {
-            try {
-                const response = await fetch('/api/v1/analytics/ml-analysis', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-                
-                if (response.ok) {
-                    const result = await response.json();
-                    alert(`🧠 ML Analysis Started!\n\nJob ID: ${result.data.job_id}\nModels: Clustering, Prediction, Recommendations\nStatus: ${result.data.status}`);
-                } else {
-                    throw new Error('ML API not available');
-                }
-            } catch (error) {
-                console.warn('ML API error:', error);
-                alert('🧠 ML Analysis Pipeline\n\n• Clustering user behaviors\n• Predicting drop-off probability\n• Recommendation engine training\n• Pattern recognition algorithms');
-            }
-        }
+      byId('stage-rows').innerHTML = stages.map((stage, index) => `
+        <tr><td>${safeText(stage.name)}</td><td>${stage.users.toLocaleString()}</td><td>${percent(stage.rate)}</td>
+        <td>${index ? `<span class="drop">−${percent(stage.drop)}</span>` : '—'}</td></tr>`).join('');
 
-        async function generateReport() {
-            const btn = event.target;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
-            btn.disabled = true;
-            
-            try {
-                const response = await fetch('/api/v1/reports/generate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        report_type: 'comprehensive',
-                        output_format: 'pdf',
-                        flow_ids: ['*'],
-                        start_date: new Date(Date.now() - 30*24*60*60*1000).toISOString(),
-                        end_date: new Date().toISOString(),
-                        include_sections: ['executive_summary', 'conversion_funnel', 'friction_analysis', 'recommendations']
-                    })
-                });
-                
-                if (response.ok) {
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.style.display = 'none';
-                    a.href = url;
-                    a.download = `onboarding-analysis-report-${new Date().toISOString().split('T')[0]}.pdf`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
-                    
-                    alert('📋 Report Generated Successfully!\n\nThe PDF report has been downloaded to your Downloads folder.');
-                } else {
-                    throw new Error('Report API not available');
-                }
-            } catch (error) {
-                console.warn('Report API error:', error);
-                alert('📋 Report Generation\n\nNote: PDF download requires backend API.\nPlease check server status or try again later.');
-            } finally {
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }, 2000);
-            }
-        }
+      if (stages.length > 1) {
+        byId('insights-content').innerHTML = `
+          <div class="insight"><span class="insight-mark" aria-hidden="true">↘</span><div><strong>Largest observed loss: ${safeText(worst.name)}</strong><p>${percent(worst.drop)} fewer users reached this stage than the previous one. Investigate the experience between these two events first.</p></div></div>
+          <div class="insight"><span class="insight-mark" aria-hidden="true">◎</span><div><strong>${percent(last.rate)} reached the final event</strong><p>${last.users.toLocaleString()} of ${result.startUsers.toLocaleString()} first-stage users triggered “${safeText(last.name)}”. Counts are per distinct user and stages follow CSV event order.</p></div></div>`;
+      } else {
+        byId('insights-content').innerHTML = '<div class="insight"><span class="insight-mark" aria-hidden="true">!</span><div><strong>Only one event stage was found</strong><p>Add more event types to your CSV to compare progression and spot drop-offs.</p></div></div>';
+      }
+      hideNotice();
+    }
 
-        function configureEmail() {
-            window.open('/api/v1/email-digest/status', '_blank');
-        }
+    function showNotice(message, isError = false) {
+      const notice = byId('notice');
+      notice.textContent = message;
+      notice.className = `notice visible${isError ? ' error' : ''}`;
+    }
 
-        function openDatabase() {
-            if (confirm('⚠️ This will open database management console.\n\nProceed with caution as this affects live data.')) {
-                window.open('/api/v1/database/console', '_blank');
-            }
-        }
+    function hideNotice() { byId('notice').className = 'notice'; }
 
-        // Real-time updates
-        async function updateDashboardData() {
-            try {
-                const apiPayload = await fetchAnalyticsData();
-                const data = apiPayload && apiPayload.data ? apiPayload.data : apiPayload;
-                
-                // Update statistics
-                if (data.totalUsers) document.getElementById('totalUsers').textContent = data.totalUsers.toLocaleString();
-                if (data.conversionRate) document.getElementById('conversionRate').textContent = data.conversionRate + '%';
-                if (data.frictionPoints) document.getElementById('frictionPoints').textContent = data.frictionPoints;
-                if (data.recommendations) document.getElementById('recommendations').textContent = data.recommendations;
-                
-                // Update charts
-                updateChartData(data);
-                
-            } catch (error) {
-                console.error('Failed to update dashboard data:', error);
-            }
-        }
+    function download(name, content, type) {
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(new Blob([content], { type }));
+      link.download = name;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
 
-        function updateChartData(data) {
-            // Update Funnel Chart
-            if (charts.funnel && data.funnelData) {
-                charts.funnel.data.datasets[0].data = data.funnelData.values;
-                charts.funnel.update('none');
-            }
-
-            // Update Drop-off Chart
-            if (charts.dropoff && data.dropoffData) {
-                charts.dropoff.data.datasets[0].data = data.dropoffData.values;
-                charts.dropoff.update('none');
-            }
-
-            // Update Segment Chart
-            if (charts.segment && data.segmentData) {
-                charts.segment.data.datasets[0].data = data.segmentData.values;
-                charts.segment.update('none');
-            }
-
-            // Update Trends Chart
-            if (charts.trends && data.trendsData) {
-                charts.trends.data.datasets[0].data = data.trendsData.values;
-                charts.trends.update('none');
-            }
-        }
-
-        // Initialize on page load with real-time updates
-        document.addEventListener('DOMContentLoaded', async function() {
-            await initializeCharts();
-            
-            // Start real-time updates every second
-            realTimeUpdateInterval = setInterval(updateDashboardData, 1000);
-            
-            console.log('✅ Onboarding Drop-off Analyzer Dashboard Initialized with Real-time Data');
-            console.log('🔄 Real-time updates: Every 1 second');
-            console.log('📊 Data source: Live API endpoints');
-        });
-    </script>
+    byId('sample-button').addEventListener('click', () => {
+      analyze(sampleRows.map(([userId, eventName], position) => ({ userId, eventName, position })), 'Illustrative sample data');
+      showNotice('Showing illustrative sample data, not production analytics. Import your CSV to analyze your own journey.');
+    });
+    byId('upload-button').addEventListener('click', () => byId('file-input').click());
+    byId('file-input').addEventListener('change', async (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      if (file.size > 10 * 1024 * 1024) { showNotice('This demo accepts CSV files up to 10 MB.', true); event.target.value = ''; return; }
+      try {
+        analyze(parseCsv(await file.text()), file.name);
+        showNotice(`Analyzed ${file.name} locally. The file was not sent to a server.`);
+      } catch (error) {
+        showNotice(error.message || 'Could not read this CSV file.', true);
+      } finally {
+        event.target.value = '';
+      }
+    });
+    byId('drop-zone').addEventListener('dragover', (event) => { event.preventDefault(); });
+    byId('drop-zone').addEventListener('drop', async (event) => {
+      event.preventDefault();
+      const file = Array.from(event.dataTransfer.files).find((item) => item.name.toLowerCase().endsWith('.csv'));
+      if (!file) { showNotice('Drop a CSV file to analyze it.', true); return; }
+      if (file.size > 10 * 1024 * 1024) { showNotice('This demo accepts CSV files up to 10 MB.', true); return; }
+      try {
+        analyze(parseCsv(await file.text()), file.name);
+        showNotice(`Analyzed ${file.name} locally. The file was not sent to a server.`);
+      } catch (error) {
+        showNotice(error.message || 'Could not read this CSV file.', true);
+      }
+    });
+    byId('template-button').addEventListener('click', () => download('onboarding-events-template.csv', 'user_id,event_name\\nuser-001,Visit landing page\\nuser-001,Create account\\nuser-002,Visit landing page\\n', 'text/csv;charset=utf-8'));
+    byId('export-button').addEventListener('click', () => {
+      if (!currentAnalysis) return;
+      download('onboarding-funnel-summary.json', JSON.stringify({ note: 'Browser-local demo analysis. Not production analytics.', analyzed_at: new Date().toISOString(), ...currentAnalysis }, null, 2), 'application/json');
+    });
+  </script>
 </body>
 </html>
