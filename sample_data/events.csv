@@ -1,0 +1,13 @@
+user_id,event_name,timestamp
+user-001,Visit landing page,2026-10-01T09:00:00Z
+user-001,Create account,2026-10-01T09:02:00Z
+user-001,Complete profile,2026-10-01T09:05:00Z
+user-001,First key action,2026-10-01T09:08:00Z
+user-002,Visit landing page,2026-10-01T09:01:00Z
+user-002,Create account,2026-10-01T09:03:00Z
+user-002,Complete profile,2026-10-01T09:07:00Z
+user-003,Visit landing page,2026-10-01T09:02:00Z
+user-003,Create account,2026-10-01T09:04:00Z
+user-004,Visit landing page,2026-10-01T09:03:00Z
+user-004,Create account,2026-10-01T09:05:00Z
+user-005,Visit landing page,2026-10-01T09:04:00Z

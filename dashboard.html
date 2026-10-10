@@ -358,6 +358,8 @@
       if (!currentAnalysis) return;
       download('onboarding-funnel-summary.json', JSON.stringify({ note: 'Browser-local demo analysis. Not production analytics.', analyzed_at: new Date().toISOString(), ...currentAnalysis }, null, 2), 'application/json');
     });
+
+    byId('sample-button').click();
   </script>
 </body>
 </html>
